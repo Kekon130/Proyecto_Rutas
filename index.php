@@ -2,10 +2,9 @@
 
 require("./vendor/autoload.php");
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->safeLoad();
+$env = parse_ini_file("./config.ini");
 
-$url = "https://nominatim.openstreetmap.org/search?q=" . $_ENV["LOCALIZACION"] . "&format=json&email=" . $_ENV["EMAIL"];
+$url = "https://nominatim.openstreetmap.org/search?q=" . $env["localizacion"] . "&format=json&email=" . $env["email"];
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
