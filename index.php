@@ -1,21 +1,26 @@
 <?php
 
-require("./vendor/autoload.php");
-
 $env = parse_ini_file("./config.ini");
 
-$url = "https://nominatim.openstreetmap.org/search?q=" . $env["localizacion"] . "&format=json&email=" . $env["email"];
+$prueba = getCoordenadas($env["localizacion"], $env["email"]);
+print_r($prueba);
 
-$curl = curl_init($url);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+function getCoordenadas($ubicacion, $email)
+{
+  $resultado = null;
+  $url = "https://nominatim.openstreetmap.org/search?q=" . $ubicacion . "&format=json&email=" . $email;
+  $curl = curl_init($url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-$res = curl_exec($curl);
+  $res = curl_exec($curl);
 
-if ($res === false) {
-  echo "Hubo un error en la petición: " . curl_error($curl);
-} else {
-  echo $res;
+  if ($res === false) {
+    echo "Hubo un error en la petición: " . curl_error($curl);
+  } else {
+    $aux = json_decode($res, true);
+    $resultado = array("latitud" => $aux[0]["lat"], "longitud" => $aux[0]["lon"]);
+  }
+  curl_close($curl);
+  return $resultado;
 }
-
-curl_close($curl);
 ?>
