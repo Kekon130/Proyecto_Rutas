@@ -1,7 +1,11 @@
 <?php
 
-$localizacion = "Azuqueca de Henares";
-$url = "https://nominatim.openstreetmap.org/search?q=Azuqueca%20de%20Henares&format=json&email=sergio.plaza@alumnos.upm.es";
+require("./vendor/autoload.php");
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+$url = "https://nominatim.openstreetmap.org/search?q=" . $_ENV["LOCALIZACION"] . "&format=json&email=" . $_ENV["EMAIL"];
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
