@@ -20,7 +20,8 @@
 			"extensions": [
 				"ms-azuretools.vscode-docker",
 				"DEVSENSE.phptools-vscode",
-				"DEVSENSE.profiler-php-vscode"
+				"DEVSENSE.profiler-php-vscode",
+				"formulahendry.auto-rename-tag"
 			]
 		}
 	}
