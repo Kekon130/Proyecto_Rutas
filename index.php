@@ -1,4 +1,7 @@
 <?php
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 $localizacion = "Azuqueca de Henares";
 $url = "https://nominatim.openstreetmap.org/search?q=Azuqueca%20de%20Henares&format=json&email=sergio.plaza@alumnos.upm.es";
 
