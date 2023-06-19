@@ -1,13 +1,11 @@
 <?php
 $env = parse_ini_file("./config.ini");
 
-define("UBICACION", $env["localizacion"]);
-define("EMAIL", $env["email"]);
-
 function getCoordenadas($ubicacion)
 {
+  $email = parse_ini_file("./config.ini")["email"];
   $resultado = null;
-  $url = "https://nominatim.openstreetmap.org/search?q=" . $ubicacion . "&format=json&email=" . EMAIL;
+  $url = "https://nominatim.openstreetmap.org/search?q=" . $ubicacion . "&format=json&email=" . $email;
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
@@ -31,7 +29,8 @@ function parseString($string)
 
 function getDistancia2PuntosLineaRecta($localizacion)
 {
-  $coordenadas1 = getCoordenadas(parseString(UBICACION));
+  $ubicacion = parse_ini_file("./config.ini")["localizacion"];
+  $coordenadas1 = getCoordenadas(parseString($ubicacion));
   $coordenadas2 = getCoordenadas(parseString($localizacion));
   return array("Distancia" => calcularModuloDistancia($coordenadas1, $coordenadas2));
 }
