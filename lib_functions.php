@@ -5,7 +5,8 @@ function getCoordenadas($ubicacion)
 {
   $email = parse_ini_file("./config.ini")["email"];
   $resultado = null;
-  $url = "https://nominatim.openstreetmap.org/search?q=" . $ubicacion . "&format=json&email=" . $email;
+  $url = "https://nominatim.openstreetmap.org/search?q=" . $ubicacion . "&format=json&email=" .
+    $email;
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
@@ -21,18 +22,23 @@ function getCoordenadas($ubicacion)
   return $resultado;
 }
 
-//El proposito de esta función es que la api no admite espacios en blanco en las ubicaciones y por eso se reemplazan por %20
+function getParDeCoordenadas($origen)
+{
+  $destino = parse_ini_file("./config.ini")["localizacion"];
+  $coordenadasOrigen = getCoordenadas(parseString($origen));
+  $coordenadasDestino = getCoordenadas(parseString($destino));
+  return array("origen" => $coordenadasOrigen, "destino" => $coordenadasDestino);
+}
+
+//El proposito de esta función es reemplazar los espacios en blanco por %20 ya que la API no los admite
 function parseString($string)
 {
   return str_replace(" ", "%20", $string);
 }
 
-function getDistancia2PuntosLineaRecta($localizacion)
+function getDistancia2PuntosLineaRecta($origen, $destino)
 {
-  $ubicacion = parse_ini_file("./config.ini")["localizacion"];
-  $coordenadas1 = getCoordenadas(parseString($ubicacion));
-  $coordenadas2 = getCoordenadas(parseString($localizacion));
-  return array("Distancia" => calcularModuloDistancia($coordenadas1, $coordenadas2));
+  return array("Distancia" => calcularModuloDistancia($origen, $destino));
 }
 
 function calcularModuloDistancia($coordenadas1, $coordenadas2)
@@ -50,10 +56,37 @@ function calcularModuloDistancia($coordenadas1, $coordenadas2)
   $deltaLongitud = $longitud2 - $longitud1;
 
   // Cálculo de la distancia utilizando la fórmula haversine
-  $a = sin($deltaLatitud / 2) * sin($deltaLatitud / 2) + cos($latitud1) * cos($latitud2) * sin($deltaLongitud / 2) * sin($deltaLongitud / 2);
+  $a = sin($deltaLatitud / 2) * sin($deltaLatitud / 2) + cos($latitud1) * cos($latitud2) *
+    sin($deltaLongitud / 2) * sin($deltaLongitud / 2);
   $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
   $distancia = $radioTierra * $c;
 
   return $distancia;
+}
+
+function getRuta($latitud1, $longitud1, $latitud2, $longitud2)
+{
+  $resultado = null;
+  $api_key = parse_ini_file("./config.ini")["openroute_key"];
+  $url = "https://api.openrouteservice.org/v2/directions/driving-car?api_key=" . $api_key .
+    "&start=" . $longitud1 . "," . $latitud1 . "&end=" . $longitud2 . "," . $latitud2;
+
+  $curl = curl_init($url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+  $res = curl_exec($curl);
+  if ($res === false) {
+    echo curl_error($curl);
+  } else {
+    $aux = json_decode($res, true)["features"][0]["properties"]["summary"];
+    $resultado = array("distancia" => $aux["distance"], "duracion" => $aux["duration"]);
+  }
+  curl_close($curl);
+  return $resultado;
+}
+
+function getRutaMasRapida2puntos($origen, $destino)
+{
+
 }
 ?>
