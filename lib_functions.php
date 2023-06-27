@@ -5,8 +5,8 @@ function getCoordenadas($ubicacion)
 {
   $email = parse_ini_file("./config.ini")["email"];
   $resultado = null;
-  $url = "https://nominatim.openstreetmap.org/search?q=" . $ubicacion . "&format=json&email=" .
-    $email;
+  $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($ubicacion) .
+    "&format=json&email=" . urlencode($email);
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
@@ -25,20 +25,15 @@ function getCoordenadas($ubicacion)
 function getParDeCoordenadas($origen)
 {
   $destino = parse_ini_file("./config.ini")["localizacion"];
-  $coordenadasOrigen = getCoordenadas(parseString($origen));
-  $coordenadasDestino = getCoordenadas(parseString($destino));
+  $coordenadasOrigen = getCoordenadas($origen);
+  $coordenadasDestino = getCoordenadas($destino);
   return array("origen" => $coordenadasOrigen, "destino" => $coordenadasDestino);
 }
 
-//El proposito de esta función es reemplazar los espacios en blanco por %20 ya que la API no los admite
-function parseString($string)
+function getDistancia2PuntosLineaRecta($origen)
 {
-  return str_replace(" ", "%20", $string);
-}
-
-function getDistancia2PuntosLineaRecta($origen, $destino)
-{
-  return array("Distancia" => calcularModuloDistancia($origen, $destino));
+  $coordenadas = getParDeCoordenadas($origen);
+  return array("Distancia" => calcularModuloDistancia($coordenadas["origen"], $coordenadas["destino"]));
 }
 
 function calcularModuloDistancia($coordenadas1, $coordenadas2)
@@ -64,29 +59,29 @@ function calcularModuloDistancia($coordenadas1, $coordenadas2)
   return $distancia;
 }
 
-function getRuta($latitud1, $longitud1, $latitud2, $longitud2)
+function getRutaMasRapida2puntos($origen, $destino)
 {
+  $latitud1 = $origen["lat"];
+  $longitud1 = $origen["lon"];
+  $latitud2 = $destino["lat"];
+  $longitud2 = $destino["lon"];
   $resultado = null;
   $api_key = parse_ini_file("./config.ini")["openroute_key"];
-  $url = "https://api.openrouteservice.org/v2/directions/driving-car?api_key=" . $api_key .
-    "&start=" . $longitud1 . "," . $latitud1 . "&end=" . $longitud2 . "," . $latitud2;
+  $url = "https://api.openrouteservice.org/v2/directions/driving-car?api_key=" . urlencode($api_key) .
+    "&start=" . urlencode($longitud1) . "," . urlencode($latitud1) . "&end=" . urlencode($longitud2) .
+    "," . urlencode($latitud2);
 
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
   $res = curl_exec($curl);
   if ($res === false) {
-    echo curl_error($curl);
+    $resultado = curl_error($curl);
   } else {
     $aux = json_decode($res, true)["features"][0]["properties"]["summary"];
     $resultado = array("distancia" => $aux["distance"], "duracion" => $aux["duration"]);
   }
   curl_close($curl);
   return $resultado;
-}
-
-function getRutaMasRapida2puntos($origen, $destino)
-{
-
 }
 ?>
