@@ -6,8 +6,7 @@ $path = $_SERVER["REQUEST_URI"];
 
 if ($method === "GET" && strpos($path, "/distanciaLineaRecta") === 0) {
   try {
-    $origen = $_GET["destino"];
-    echo json_encode(getDistancia2PuntosLineaRecta($origen));
+    echo getDistancia2PuntosLineaRecta($_GET["origen"]);
   } catch (Exception $ex) {
     echo $ex->getMessage();
   }
@@ -15,9 +14,23 @@ if ($method === "GET" && strpos($path, "/distanciaLineaRecta") === 0) {
 
 if ($method === "GET" && strpos($path, "/distanciaCoche") === 0) {
   try {
-    $destino = $_GET["destino"];
-    $ubicaciones = getParDeCoordenadas($destino);
-    echo json_encode(getRutaMasRapida2puntos($ubicaciones["origen"], $ubicaciones["destino"]));
+    echo getRutaMasRapidaCoche($_GET["origen"]);
+  } catch (Exception $ex) {
+    echo $ex->getMessage();
+  }
+}
+
+if ($method === "GET" && strpos($path, "/distanciaTransportePublico") === 0) {
+  try {
+    echo getRutaMasRapidaTransportePublico($_GET["origen"]);
+  } catch (Exception $ex) {
+    echo $ex->getMessage();
+  }
+}
+
+if ($method === "GET" && strpos($path, "/distancia") === 0) {
+  try {
+    echo getInformation($_GET["origen"]);
   } catch (Exception $ex) {
     echo $ex->getMessage();
   }
