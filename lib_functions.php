@@ -1,7 +1,7 @@
 <?php
 $env = parse_ini_file("./config.ini");
 
-function getCoordenadas($ubicacion)
+/*function getCoordenadas($ubicacion)
 {
   $email = parse_ini_file("./config.ini")["email"];
   $resultado = null;
@@ -20,20 +20,52 @@ function getCoordenadas($ubicacion)
   }
   curl_close($curl);
   return $resultado;
+}*/
+
+function getCoordenadas($ubicacion, $curl)
+{
+  $email = parse_ini_file("./config.ini")["email"];
+  $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($ubicacion) .
+    "&format=json&email=" . urlencode($email);
+
+  curl_setopt($curl, CURLOPT_URL, $url);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+  $res = curl_exec($curl);
+
+  if ($res === false) {
+    throw new Exception(curl_error($curl));
+  } else {
+    $aux = json_decode($res, true);
+    return array("lat" => $aux[0]["lat"], "lng" => $aux[0]["lon"]);
+  }
 }
 
 function getParDeCoordenadas($origen)
 {
-  $destino = parse_ini_file("./config.ini")["localizacion"];
-  $coordenadasOrigen = getCoordenadas($origen);
-  $coordenadasDestino = getCoordenadas($destino);
-  return array("origen" => $coordenadasOrigen, "destino" => $coordenadasDestino);
+  try {
+    $destino = parse_ini_file("./config.ini")["localizacion"];
+    $curl = curl_init();
+    $coordenadasOrigen = getCoordenadas($origen, $curl);
+    $coordenadasDestino = getCoordenadas($destino, $curl);
+    return array("origen" => $coordenadasOrigen, "destino" => $coordenadasDestino);
+  } catch (Exception $e) {
+    echo $e->getMessage();
+  } finally {
+    curl_close($curl);
+  }
 }
 
 function getDistancia2PuntosLineaRecta($origen)
 {
-  $coordenadas = getParDeCoordenadas($origen);
-  return json_encode(calcularModuloDistancia($coordenadas["origen"], $coordenadas["destino"]));
+  try {
+    $coordenadas = getParDeCoordenadas($origen);
+    return json_encode(array("distancia" => calcularModuloDistancia($coordenadas["origen"], $coordenadas["destino"])));
+  } catch (Exception $e) {
+    echo $e->getMessage();
+  } finally {
+    curl_close();
+  }
 }
 
 function calcularModuloDistancia($coordenadas1, $coordenadas2)
@@ -56,40 +88,39 @@ function calcularModuloDistancia($coordenadas1, $coordenadas2)
   $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
   $distancia = $radioTierra * $c;
 
-  return array("distancia" => $distancia);
+  return $distancia;
 }
 
-function getRutaMasRapida2puntosCoche($latitud1, $longitud1, $latitud2, $longitud2)
+function getRutaMasRapida2puntosCoche($latitud1, $longitud1, $latitud2, $longitud2, $curl)
 {
-  $resultado = null;
   $api_key = parse_ini_file("./config.ini")["openroute_key"];
 
   $url = "https://api.openrouteservice.org/v2/directions/driving-car?api_key=" . urlencode($api_key) .
     "&start=" . urlencode($longitud1) . "," . urlencode($latitud1) . "&end=" . urlencode($longitud2) .
     "," . urlencode($latitud2);
 
-  $curl = curl_init($url);
+  curl_setopt($curl, CURLOPT_URL, $url);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
   $res = curl_exec($curl);
   if ($res === false) {
-    $resultado = array("error" => curl_error($curl));
+    throw new Exception(curl_error($curl), curl_errno($curl));
   } else {
     $aux = json_decode($res, true)["features"][0]["properties"]["summary"];
-    $resultado = array("distancia" => $aux["distance"], "duracion" => $aux["duration"]);
+    return array("distancia" => $aux["distance"], "duracion" => $aux["duration"]);
   }
-  curl_close($curl);
-  return $resultado;
 }
 
 function getRutaMasRapidaCoche($origen)
 {
-  $coordenadas = getParDeCoordenadas($origen);
-  $latitud1 = $coordenadas["origen"]["lat"];
-  $longitud1 = $coordenadas["origen"]["lng"];
-  $latitud2 = $coordenadas["destino"]["lat"];
-  $longitud2 = $coordenadas["destino"]["lng"];
-  return json_encode(getRutaMasRapida2puntosCoche($latitud1, $longitud1, $latitud2, $longitud2));
+  try {
+    $coordenadas = getParDeCoordenadas($origen);
+    $latitud1 = $coordenadas["origen"]["lat"];
+    $longitud1 = $coordenadas["origen"]["lng"];
+    $latitud2 = $coordenadas["destino"]["lat"];
+    $longitud2 = $coordenadas["destino"]["lng"];
+    return json_encode(getRutaMasRapida2puntosCoche($latitud1, $longitud1, $latitud2, $longitud2));
+  }
 }
 
 function getRutaMasRapidaTransportePublico($origen)
@@ -131,7 +162,7 @@ function getDistanceOfTrip($array)
     $section = $array[$i];
     $coordenadas1 = $section["departure"]["place"]["location"];
     $coordenadas2 = $section["arrival"]["place"]["location"];
-    $distance += calcularModuloDistancia($coordenadas1, $coordenadas2)["distancia"];
+    $distance += calcularModuloDistancia($coordenadas1, $coordenadas2);
   }
   return $distance;
 }
