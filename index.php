@@ -28,7 +28,7 @@ if ($method === "GET" && strpos($path, "/distanciaTransportePublico") === 0) {
   }
 }
 
-if ($method === "GET" && strpos($path, "/informacionDistancia") === 0) {
+if ($method === "GET" && strpos($path, "/distancia") === 0) {
   try {
     echo getInformation($_GET["origen"]);
   } catch (Exception $ex) {
