@@ -27,7 +27,7 @@ function getDistancia2PuntosLineaRecta($origen)
   try {
     $coordenadasOrigen = getCoordenadas($origen, $curl);
     $coordenadasDestino = getCoordenadas($env["destino"], $curl);
-    return json_encode(array("distancia" => calcularModuloDistancia($coordenadasOrigen, $coordenadasDestino)));
+    return json_encode(array("distancia" => number_format(calcularModuloDistancia($coordenadasOrigen, $coordenadasDestino), 2)));
   } catch (Exception $e) {
     echo $e->getMessage();
   } finally {
@@ -41,9 +41,9 @@ function calcularModuloDistancia($coordenadas1, $coordenadas2)
 
   // Convertir las coordenadas de grados a radianes
   $latitud1 = deg2rad($coordenadas1["lat"]);
-  $longitud1 = deg2rad($coordenadas1["lon"]);
+  $longitud1 = deg2rad($coordenadas1["lng"]);
   $latitud2 = deg2rad($coordenadas2["lat"]);
-  $longitud2 = deg2rad($coordenadas2["lon"]);
+  $longitud2 = deg2rad($coordenadas2["lng"]);
 
   // Diferencia de latitudes y longitudes
   $deltaLatitud = $latitud2 - $latitud1;
@@ -96,7 +96,7 @@ function getRutaMasRapida2puntosCoche($latitud1, $longitud1, $latitud2, $longitu
     throw new Exception(curl_error($curl), curl_errno($curl));
   } else {
     $aux = json_decode($res, true)["features"][0]["properties"]["summary"];
-    return array("distancia" => $aux["distance"], "duracion" => $aux["duration"]);
+    return array("distancia" => number_format($aux["distance"] / 1000, 2), "duracion" => parseDate($aux["duration"]));
   }
 }
 
@@ -138,7 +138,7 @@ function getRutaMasRapida2puntosTP($latitud1, $longitud1, $latitud2, $longitud2,
     throw new Exception(curl_error($curl), curl_errno($curl));
   } else {
     $aux = json_decode($res, true)["routes"][0]["sections"];
-    return array("distancia" => getDistanceOfTrip($aux), "tiempo" => getTimeOfTrip($aux));
+    return array("distancia" => number_format(getDistanceOfTrip($aux), 2), "tiempo" => getTimeOfTrip($aux));
   }
 }
 
@@ -163,7 +163,13 @@ function getTimeOfTrip($array)
     $date2 = $section["arrival"]["time"];
     $time += getDiffDates($date1, $date2);
   }
-  return array("horas" => ($time / 3600), "minutos" => (($time % 3600) / 60), "segundos" => $time % 60);
+  return parseDate($time);
+}
+
+function parseDate($time)
+{
+  $time = round($time);
+  return array("horas" => floor(($time / 3600)), "minutos" => (($time % 3600) / 60), "segundos" => $time % 60);
 }
 
 function getDiffDates($inicDate, $endDate)
@@ -188,7 +194,7 @@ function getInformation($origen)
     $latitud2 = $coordenadasDestino["lat"];
     $longitud2 = $coordenadasDestino["lng"];
 
-    $distanciaLineaRecta = calcularModuloDistancia($coordenadasOrigen, $coordenadasDestino);
+    $distanciaLineaRecta = array("distancia" => number_format(calcularModuloDistancia($coordenadasOrigen, $coordenadasDestino), 2));
     $distanciaCoche = getRutaMasRapida2puntosCoche($latitud1, $longitud1, $latitud2, $longitud2, $curl);
     $distanciaTransportePublico = getRutaMasRapida2puntosTP($latitud1, $longitud1, $latitud2, $longitud2, $curl);
     return json_encode(array("linea recta" => $distanciaLineaRecta, "coche" => $distanciaCoche, "transporte publico" => $distanciaTransportePublico));
