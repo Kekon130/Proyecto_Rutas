@@ -2,7 +2,7 @@
 El propósito de este proyecto es determinar la distancia y el tiempo que esta tarda una persona en llegar a un punto determinado, ya sea en transporte público o privado, conociendo su domicilio.
 
 ## Antes de empezar a usar
-Para usar correctamente este sistema se debe crear dentro del directorio un fichero con el nombre "config.ini".
+Para usar correctamente este sistema se debe crear dentro del directorio un fichero con el nombre "config.ini". Puede consultarse ele ejemplo que se encuentra subido en el repositorio.
 
 Dentro del fichero se tendrán que declarar, respetando los nombre que aparecen a continuación y el formato descrito en el apartado de formatos, las variables:
 * **destino:** en esta variable se debe guardar la ubicación del lugar que se quiere usar como referencia (respetando el formato descrito en el apartado de Formatos) para el destino que servirá tanto para el cálculo de distancias como para el cálculo de rutas.
@@ -10,7 +10,7 @@ Dentro del fichero se tendrán que declarar, respetando los nombre que aparecen 
 * **openroute_key:** en esta varibale se debe guardar la API_key que se puede [generar](https://openrouteservice.org/dev/#/home) después de [dar de alta](https://openrouteservice.org/dev/#/signup) una cuenta en la página de Openrouteservice. Esta clave servirá para hacer las peticiones a la [API de Openrouteservice](https://openrouteservice.org/dev/#/api-docs).
 * **here_public_transport_key:** en esta variable se debe almacenar la API_key que se puede [generar](https://platform.here.com/admin/apps) después de [dar de alta](https://platform.here.com/sign-up?step=verify-identity) una cuenta en la página de HERE. Esta clave servirá para hacer las peticiones a la [API de HERE public transit](https://developer.here.com/documentation/public-transit/dev_guide/index.html).
 
-Todas las cuentas mencionadas anteriormente tienen un coste 0, aunque si se desea expandir su utilidad es posible obtener unos mejores planes, para mas informacioón consultar las respectivas webs de las APIs.
+Todas las cuentas mencionadas anteriormente tienen un coste económico de  0€, aunque si se desea expandir su utilidad es posible obtener unos mejores planes, para mas informacioón consultar las respectivas webs de las APIs.
 ## Cómo funciona
 Todas las rutas de la API requieren de un solo parametro llamado ***origen***, este parametro almacena la ubicación (que debe respetar el formato definido en el apartado de Formatos) desde la cual se desea medir la distancia o la ruta hasta el el punto de destino previamente definido.
 
