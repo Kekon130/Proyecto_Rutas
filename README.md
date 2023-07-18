@@ -6,9 +6,9 @@ Para usar correctamente este sistema se debe crear dentro del directorio un fich
 
 Dentro del fichero se tendrán que declarar, respetando los nombre que aparecen a continuación y el formato descrito en el apartado de formatos, las variables:
 * **destino:** en esta variable se debe guardar la ubicación del lugar que se quiere usar como referencia (respetando el formato descrito en el apartado de Formatos) para el destino que servirá tanto para el cálculo de distancias como para el cálculo de rutas.
-* **email:** en esta variable se debe almacenar un email que servirá para poder realizar peticiones a la API de OpenStreetMap.
-* **openroute_key:** en esta varibale se debe guardar la API_key que se puede generar [dando de alta](https://openrouteservice.org/dev/#/signup) una cuenta en la página de Openrouteservice. Esta clave servirá para hacer las peticiones a la API de Openrouteservice.
-* **here_public_transport_key:** en esta variable se debe almacenar la API_key que se puede generar [dando de alta](https://platform.here.com/sign-up?step=verify-identity) una cuenta en la página de HERE. Esta clave servirá para hacer las peticiones a la API de HERE public transit.
+* **email:** en esta variable se debe almacenar un email que servirá para poder realizar peticiones a la [API de OpenStreetMap](https://nominatim.org/release-docs/develop/api/Overview/).
+* **openroute_key:** en esta varibale se debe guardar la API_key que se puede generar [dando de alta](https://openrouteservice.org/dev/#/signup) una cuenta en la página de Openrouteservice. Esta clave servirá para hacer las peticiones a la [API de Openrouteservice](https://openrouteservice.org/dev/#/api-docs).
+* **here_public_transport_key:** en esta variable se debe almacenar la API_key que se puede generar [dando de alta](https://platform.here.com/sign-up?step=verify-identity) una cuenta en la página de HERE. Esta clave servirá para hacer las peticiones a la [API de HERE public transit](https://developer.here.com/documentation/public-transit/dev_guide/index.html).
 
 Todas las cuentas mencionadas anteriormente tienen un coste 0, aunque si se desea expandir su utilidad es posible obtener unos mejores planes, para mas informacioón consultar las respectivas webs de las APIs.
 ## Como funciona
