@@ -21,6 +21,12 @@ A continuación se va a explicar cada una de las rutas de la API:
 * **/informacionDistancia?origen=ubicación:** esta ruta devuelve un JSON en el que se incluye todo lo que devuelven las otras rutas.
 
 ## Formatos
-* **Formato de las entradas del fichero config.ini:**: *nombre_variable = "valor_variable"*
+* **Formato de las entradas del fichero config.ini:** *nombre_variable = "valor_variable"*
 * **Formato de las ubicaciones:** *"nombre de la calle", "código postal", "ciudad en la que se encuentra", "comunidad autónoma en la que se encuentra"*
+
+## Ejemplos de entradas/salidas
+* **/distanciaLineaRecta:**
+ * *Entrada:* http://localhost:8080/distanciaLineaRecta?origen=Terminal 4, 28042, Barajas, Madrid, Comunidad de Madrid
+ ---
+ * *Salida:* {"distancia":"11.74"}
 
