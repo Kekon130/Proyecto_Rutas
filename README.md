@@ -25,8 +25,18 @@ A continuación se va a explicar cada una de las rutas de la API:
 * **Formato de las ubicaciones:** *"nombre de la calle", "código postal", "ciudad en la que se encuentra", "comunidad autónoma en la que se encuentra"*
 
 ## Ejemplos de entradas/salidas
-* **/distanciaLineaRecta:**
- * *Entrada:* http://localhost:8080/distanciaLineaRecta?origen=Terminal 4, 28042, Barajas, Madrid, Comunidad de Madrid
- ---
- * *Salida:* {"distancia":"11.74"}
+* **/distanciaLineaRecta**
+  * *Entrada:* http://localhost:8080/distanciaLineaRecta?origen=Terminal 4, 28042, Barajas, Madrid, Comunidad de Madrid
+  * *Salida:* {"distancia":"11.74"}
+* **/distanciaCoche**
+  * *Entrada:* http://localhost:8080/distanciaCoche?origen=Terminal 4, 28042, Barajas, Madrid, Comunidad de Madrid
+  * *Salida:* {"distancia":"16.25","duracion":{"horas":0,"minutos":16,"segundos":44}}
+
+* **/distanciaTransportePublico**
+  * *Entrada:* http://localhost:8080/distanciaTransportePublico?origen=Terminal 4, 28042, Barajas, Madrid, Comunidad de Madrid
+  * *Salida:* {"distancia":"19.03","tiempo":{"horas":0,"minutos":57,"segundos":0}}
+
+* **/informacionDistancia**
+  * *Entrada:* http://localhost:8080/informacionDistancia?origen=Terminal 4, 28042, Barajas, Madrid, Comunidad de Madrid
+  * *Salida:* {"linea recta":{"distancia":"11.74"},"coche":{"distancia":"16.25","duracion":{"horas":0,"minutos":16,"segundos":44}},"transporte publico":{"distancia":"19.03","tiempo":{"horas":0,"minutos":57,"segundos":0}}}
 
